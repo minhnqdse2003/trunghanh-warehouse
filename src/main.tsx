@@ -6,9 +6,15 @@ import './index.css'
 import '@fontsource-variable/nunito-sans'
 import { RouterProvider } from 'react-router-dom'
 import router from './routes/index.tsx'
+import { Toaster } from '@/components/ui/sonner'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { queryClient } from './lib/query-client.ts'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <Toaster />
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   </StrictMode>,
 )

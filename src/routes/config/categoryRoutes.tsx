@@ -9,5 +9,5 @@ export const categoryRoutes: RoutesProps = {
   url: '/category',
   icon: <Tag />,
   element: <CategoryRootPage />,
-  allowedRoles: [ROLES.ADMIN.value, ROLES.SALEADMIN.value],
+  allowedRoles: [ROLES.ADMIN, ROLES.SALEADMIN],
 }

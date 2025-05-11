@@ -9,7 +9,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from './ui/sidebar'
-import useAuth from '@/hooks/useAuth'
+import useAuth from '@/hooks/use-auth'
 import { filterRoutesByRole } from '@/routes/utils/routeFilters'
 import { routes } from '@/routes/config'
 import {
