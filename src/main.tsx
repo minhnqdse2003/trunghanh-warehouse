@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -9,6 +8,7 @@ import router from './routes/index.tsx'
 import { Toaster } from '@/components/ui/sonner'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from './lib/query-client.ts'
+import { StrictMode } from 'react'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -16,5 +16,6 @@ createRoot(document.getElementById('root')!).render(
       <Toaster />
       <RouterProvider router={router} />
     </QueryClientProvider>
+    ,
   </StrictMode>,
 )

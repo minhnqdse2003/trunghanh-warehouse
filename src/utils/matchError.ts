@@ -1,22 +1,26 @@
 import { ERROR_MESSAGE } from '@/types/constants/error-messages'
+import type { NavigateFunction } from 'react-router-dom'
 import { toast } from 'sonner'
+import type { z } from 'zod'
 
 export const createErrorHandler = (
-  navigate?: (path: string, options?: unknown) => void,
+  navigate?: NavigateFunction,
   onUserSignOut?: () => void,
+  onError?: (error: Error) => void,
 ) => {
   return (error: Error) => {
-    console.error('Error caught:', error)
-
+    const navigateToSignIn = () => {
+      toast(error.message)
+      if (onUserSignOut) {
+        onUserSignOut()
+      }
+      if (navigate) {
+        navigate('/sign-in', { replace: true, flushSync: true })
+      }
+    }
     switch (error.message) {
       case ERROR_MESSAGE.ALREADY_LOGGED_IN:
-        toast(error.message)
-        if (onUserSignOut) {
-          onUserSignOut()
-        }
-        if (navigate) {
-          navigate('/sign-in', { replace: true, flushSync: true })
-        }
+        navigateToSignIn()
         break
       case ERROR_MESSAGE.FORBIDDEN:
         toast(error.message)
@@ -25,29 +29,23 @@ export const createErrorHandler = (
         }
         break
       case ERROR_MESSAGE.NO_REFRESH_TOKEN_AVAILABLE:
-        toast(error.message)
-        if (onUserSignOut) {
-          onUserSignOut()
-        }
-        if (navigate) {
-          navigate('/sign-in', { replace: true, flushSync: true })
-        }
+        navigateToSignIn()
         break
       case ERROR_MESSAGE.UNAUTHORIZED:
-        toast(error.message)
-        if (onUserSignOut) {
-          onUserSignOut()
-        }
-        if (navigate) {
-          navigate('/sign-in', { replace: true, flushSync: true })
-        }
+        navigateToSignIn()
         break
       default:
-        // Handle generic errors
-        toast.error('An error occurred')
+        if (onError) {
+          onError(error)
+        } else {
+          toast(error.message)
+        }
         break
     }
 
     return error
   }
 }
+
+export const joinZodMessage = (error: z.ZodError) =>
+  error.errors.map(err => err.message).join('\n')

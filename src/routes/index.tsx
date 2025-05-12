@@ -8,6 +8,7 @@ import { filterPublicRoutes } from './utils/routeFilters'
 import { routes } from './config'
 import Layout from '@/components/Layout'
 import { generatePrivateRoutes } from './utils/privateRouteGenerator'
+import ProtectedRoutes from './config/ProtectedRoutes'
 
 const renderPublicDom = () => {
   return filterPublicRoutes(routes).map(route => (
@@ -19,9 +20,12 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       {renderPublicDom()}
-      <Route path='/' element={<Layout />}>
-        {generatePrivateRoutes(routes)}
+      <Route path='/' element={<ProtectedRoutes />}>
+        <Route path='/' element={<Layout />}>
+          {generatePrivateRoutes(routes)}
+        </Route>
       </Route>
+
       <Route path='*' element={<Navigate to={'/404'} replace />} />
     </>,
   ),

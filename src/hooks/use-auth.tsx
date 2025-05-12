@@ -13,8 +13,8 @@ interface AuthHookProps {
 }
 
 const useAuth = (): AuthHookProps => {
-  const isAuthenticated = true
-  const role = ROLES.SALES_ADMIN
+  const isAuthenticated = false
+  const role = ROLES.ADMIN
 
   const onUserSignOut = () => {
     queryClient.clear()

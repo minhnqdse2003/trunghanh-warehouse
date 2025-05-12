@@ -15,6 +15,7 @@ export const apiClient = async (
 
   const defaultHeader = {
     ...(authData?.token && { Authorization: `Bearer ${authData.token}` }),
+    ...(isBlob ? {} : { 'content-type': 'application/json' }),
   }
 
   const config: RequestInit = {

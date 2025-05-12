@@ -12,10 +12,10 @@ export const customerRoutes: RoutesProps = {
   icon: <BookUser />,
   element: <CustomerRootPage />,
   allowedRoles: [
-    ROLES.SALEADMIN,
+    ROLES.SALES_ADMIN,
     ROLES.ACCOUNTANT,
     ROLES.DIRECTOR,
-    ROLES.INVENTORYMANAGER,
+    ROLES.INVENTORY_MANAGER,
   ],
   children: [
     {
@@ -24,10 +24,10 @@ export const customerRoutes: RoutesProps = {
       url: '/customer/list',
       element: <CustomerListPage />,
       allowedRoles: [
-        ROLES.SALEADMIN,
+        ROLES.SALES_ADMIN,
         ROLES.ACCOUNTANT,
         ROLES.DIRECTOR,
-        ROLES.INVENTORYMANAGER,
+        ROLES.INVENTORY_MANAGER,
       ],
     },
     {
@@ -38,10 +38,10 @@ export const customerRoutes: RoutesProps = {
       index: true,
       element: <CustomerListPage />,
       allowedRoles: [
-        ROLES.SALEADMIN,
+        ROLES.SALES_ADMIN,
         ROLES.ACCOUNTANT,
         ROLES.DIRECTOR,
-        ROLES.INVENTORYMANAGER,
+        ROLES.INVENTORY_MANAGER,
       ],
     },
     {
@@ -49,7 +49,7 @@ export const customerRoutes: RoutesProps = {
       label: 'Tạo khách hàng mới',
       url: '/customer/create', // Corrected from "list" to "create" for clarity
       element: <CreateCustomerPage />,
-      allowedRoles: [ROLES.SALEADMIN],
+      allowedRoles: [ROLES.SALES_ADMIN],
     },
   ],
 }

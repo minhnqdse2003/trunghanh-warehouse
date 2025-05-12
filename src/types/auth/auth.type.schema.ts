@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const LoginSchema = z.object({
-  userName: z
+  username: z
     .string()
     .min(1, 'Vui lòng nhập tên tài khoản!')
     .max(50, 'Username must be less than 50 characters'),

@@ -1,4 +1,4 @@
-import { publicRoutes } from './publicRoutes'
+import { publicRoutes } from './PublicRoutes'
 import { categoryRoutes } from './categoryRoutes'
 import { customerRoutes } from './customerRoutes'
 import type { RoutesProps } from '../types'
