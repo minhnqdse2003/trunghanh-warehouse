@@ -16,7 +16,7 @@ export const authQueryClient = new QueryClient({
 
 const authStoragePersister = createSyncStoragePersister({
   storage: window.localStorage,
-  key: 'auth-cache', // Specific key for auth data
+  key: 'auth-cache',
   throttleTime: 1000,
 })
 

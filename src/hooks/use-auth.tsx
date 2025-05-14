@@ -1,43 +1,95 @@
-import { queryClient } from '@/lib/query-client'
-import type { AuthenticateInformationRequest } from '@/types/auth/auth.type.req'
-import { LoginSchema } from '@/types/auth/auth.type.schema'
-import { ROLES } from '@/types/role'
-import { toast } from 'sonner'
-import { z } from 'zod'
+import { authQueryClient } from '@/lib/query-client.auth'
+import type {
+  AuthenticateInformationResponse,
+  AuthIdentityResponse,
+} from '@/types/auth/auth.type.res'
+import { apiClient } from '@/lib/interceptor'
+import { AccountControllerEndpoints } from '@/services'
+import { QUERY_KEYS } from '@/types/constants/query-keys'
+import type {
+  AuthenticationInformationData,
+  TAuthenticationUserInformation,
+} from '@/types/auth/auth.type'
+import { useNavigate } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
+import { useCallback } from 'react'
+import { matchUserRole } from '@/utils/matchUserRole'
 
 interface AuthHookProps {
   isAuthenticated: boolean
-  role: number
+  role: number | undefined
   onUserSignOut: () => void
-  onUserSignIn: (data: AuthenticateInformationRequest) => void
+  onUserSignIn: (data: AuthenticateInformationResponse) => Promise<void>
+  user?: TAuthenticationUserInformation
 }
 
 const useAuth = (): AuthHookProps => {
-  const isAuthenticated = false
-  const role = ROLES.ADMIN
+  const { mutateAsync } = useMutation<AuthIdentityResponse>({
+    mutationFn: async () =>
+      await apiClient(`${AccountControllerEndpoints.whoami}`),
+    mutationKey: [QUERY_KEYS.WHO_AM_I],
+    onSuccess: data => setAuthIdentity(data),
+  })
+  const navigate = useNavigate()
 
-  const onUserSignOut = () => {
-    queryClient.clear()
+  const onUserSignOut = useCallback(() => {
+    authQueryClient.removeQueries({ queryKey: [QUERY_KEYS.AUTH] })
+    navigate('/sign-in', { flushSync: true, replace: true })
+  }, [navigate])
+
+  const setAuthIdentity = useCallback((data: AuthIdentityResponse) => {
+    authQueryClient.setQueryData(
+      [QUERY_KEYS.AUTH],
+      (prev: AuthenticationInformationData) => {
+        return {
+          ...prev,
+          user: {
+            email: data.email,
+            fullName: data.fullName,
+            roleName: data.roleName,
+          },
+        } as AuthenticationInformationData
+      },
+    )
+  }, [])
+
+  const setAuthToken = useCallback((data: AuthenticateInformationResponse) => {
+    authQueryClient.setQueryData(
+      [QUERY_KEYS.AUTH],
+      (prev: AuthenticationInformationData) => {
+        return {
+          ...prev,
+          token: data.token,
+          refreshToken: data.refreshToken,
+          role: matchUserRole(data.role),
+        } as AuthenticationInformationData
+      },
+    )
+  }, [])
+
+  const onUserSignIn = useCallback(
+    async (data: AuthenticateInformationResponse) => {
+      setAuthToken(data)
+      await mutateAsync()
+      navigate('/', { replace: true })
+    },
+    [mutateAsync, navigate, setAuthToken],
+  )
+
+  return {
+    isAuthenticated:
+      !!authQueryClient.getQueryData<AuthenticationInformationData>([
+        QUERY_KEYS.AUTH,
+      ]),
+    role: authQueryClient.getQueryData<AuthenticationInformationData>([
+      QUERY_KEYS.AUTH,
+    ])?.role,
+    onUserSignOut,
+    onUserSignIn,
+    user: authQueryClient.getQueryData<AuthenticationInformationData>([
+      QUERY_KEYS.AUTH,
+    ])?.user,
   }
-
-  const onUserSignIn = (data: AuthenticateInformationRequest) => {
-    try {
-      const validatedLoginData = LoginSchema.parse(data)
-      console.log(validatedLoginData)
-    } catch (error) {
-      let errorMessages
-      if (error instanceof z.ZodError) {
-        errorMessages = error.errors.map(err => err.message).join('\n')
-        toast('Sai thông tin', {
-          description: errorMessages,
-        })
-        return
-      }
-      toast(errorMessages)
-    }
-  }
-
-  return { isAuthenticated, role, onUserSignOut, onUserSignIn }
 }
 
 export default useAuth

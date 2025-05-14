@@ -17,15 +17,17 @@ export function matchQueryStatus<T>(
 export function matchQueryStatus<T>(
   query: UseQueryResult<T>,
   {
+    Idle,
     Loading,
     Errored,
     Empty,
     Success,
   }: {
+    Idle: JSX.Element
     Loading: JSX.Element
     Errored: (error: Error) => void
     Empty?: JSX.Element
-    Success: (data: UseQueryResult<T>) => JSX.Element
+    Success: (data: UseQueryResult<T>) => void
   },
 ): JSX.Element {
   if (query.isLoading) return Loading
@@ -37,18 +39,21 @@ export function matchQueryStatus<T>(
     query.data === null ||
     (Array.isArray(query.data) && query.data.length === 0)
   if (isEmpty && Empty) return Empty
-  return Success(query)
+  if (query.isSuccess) Success(query)
+  return Idle
 }
 
 export interface MatchQueryStatusOptions<T> {
+  Idle: JSX.Element
   Loading: JSX.Element
   Errored: (error: Error) => void
-  Success: (data: UseQueryResult<T>) => JSX.Element
+  Success: (data: UseQueryResult<T>) => void
 }
 
 export interface MatchQueryStatusOptionsWithEmpty<T> {
+  Idle: JSX.Element
   Loading: JSX.Element
   Errored: (error: Error) => void
   Empty: JSX.Element
-  Success: (data: UseQueryResult<T> & { data: T }) => JSX.Element
+  Success: (data: UseQueryResult<T> & { data: T }) => void
 }

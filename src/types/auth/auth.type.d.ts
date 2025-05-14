@@ -5,5 +5,7 @@ export interface AuthenticationInformationData {
   token: string,
   refreshToken: string,
   role: RoleId,
-  user: Pick<UserInformationData, "email" | "fullName" | "roleName">
+  user:TAuthenticationUserInformation
 }
+
+export type TAuthenticationUserInformation = Pick<UserInformationData, "email" | "fullName" | "roleName">

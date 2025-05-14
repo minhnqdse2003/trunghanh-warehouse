@@ -10,7 +10,7 @@ export const createErrorHandler = (
 ) => {
   return (error: Error) => {
     const navigateToSignIn = () => {
-      toast(error.message)
+      toast.error(error.message)
       if (onUserSignOut) {
         onUserSignOut()
       }
@@ -23,7 +23,7 @@ export const createErrorHandler = (
         navigateToSignIn()
         break
       case ERROR_MESSAGE.FORBIDDEN:
-        toast(error.message)
+        toast.error(error.message)
         if (navigate) {
           navigate('403', { replace: true, flushSync: true })
         }
@@ -38,7 +38,7 @@ export const createErrorHandler = (
         if (onError) {
           onError(error)
         } else {
-          toast(error.message)
+          toast.error(error.message)
         }
         break
     }

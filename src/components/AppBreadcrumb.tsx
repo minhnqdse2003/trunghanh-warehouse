@@ -35,13 +35,15 @@ const AppBreadcrumb = () => {
   ]
 
   return (
-    <BreadcrumbList>
+    <BreadcrumbList className='flex-nowrap hidden md:flex'>
       {breadcrumbItem.map((item, idx) => (
         <>
-          <BreadcrumbItem key={item.key}>
+          <BreadcrumbItem key={item.key} className='truncate'>
             <BreadcrumbLink href={item.url}>
               {idx === breadcrumbItem.length - 1 ? (
-                <strong>{item.title}</strong>
+                <strong className='hover:text-[var(--color-sidebar-accent)]'>
+                  {item.title}
+                </strong>
               ) : (
                 item.title
               )}

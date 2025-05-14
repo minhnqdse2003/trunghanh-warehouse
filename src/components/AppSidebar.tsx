@@ -2,6 +2,8 @@ import React from 'react'
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -17,31 +19,42 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from './ui/collapsible'
-import { ChevronRight } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { ChevronRight, LogOut } from 'lucide-react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import Logo from '@/assets/logo.svg?react'
+import { Separator } from './ui/separator'
 
 const AppSidebar = () => {
-  const { role } = useAuth()
+  const { role, onUserSignOut } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const handleMenuClick = (url: string) => {
     navigate(url, { replace: true, flushSync: true })
   }
 
-  const menu = filterRoutesByRole(role, routes)
+  const menu = filterRoutesByRole(role!, routes)
 
   return (
-    <Sidebar>
-      <SidebarContent>
+    <Sidebar className='rounded-tr-md rounded-br-md overflow-hidden shadow-[0_3px_10px_rgb(0,0,0,0.2)]'>
+      <SidebarHeader className='items-center'>
+        <Logo className='w-full h-[100px]' />
+        <Separator />
+      </SidebarHeader>
+      <SidebarContent className='px-3'>
         <SidebarMenu>
           {menu.map(route => (
             <React.Fragment key={route.key}>
               {route.children && route.children.length > 0 ? (
-                <Collapsible defaultOpen className='group/collapsible'>
+                <Collapsible
+                  defaultOpen={location.pathname.includes(route.url)}
+                  className='group/collapsible'>
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
                       <SidebarMenuButton asChild>
-                        <button onClick={() => handleMenuClick(route.url)}>
+                        <button
+                          className='cursor-pointer'
+                          onClick={() => handleMenuClick(route.url)}>
                           {route.icon}
                           {route.label}
                           <ChevronRight className='ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90' />
@@ -49,10 +62,16 @@ const AppSidebar = () => {
                       </SidebarMenuButton>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
-                      <SidebarMenuSub>
+                      <SidebarMenuSub className='cursor-pointer'>
                         {route.children.map(child => (
                           <SidebarMenuSubItem key={child.url}>
-                            <SidebarMenuSubButton asChild>
+                            <SidebarMenuSubButton
+                              asChild
+                              className={
+                                location.pathname === child.url
+                                  ? activeClass
+                                  : ''
+                              }>
                               <a href={child.url}>
                                 {child.icon}
                                 {child.label}
@@ -65,7 +84,7 @@ const AppSidebar = () => {
                   </SidebarMenuItem>
                 </Collapsible>
               ) : (
-                <SidebarMenuItem>
+                <SidebarMenuItem className='cursor-pointer'>
                   <SidebarMenuButton asChild>
                     <a href={route.url}>
                       {route.icon}
@@ -78,8 +97,17 @@ const AppSidebar = () => {
           ))}
         </SidebarMenu>
       </SidebarContent>
+      <SidebarFooter>
+        <Separator />
+        <SidebarMenuButton className='cursor-pointer' onClick={onUserSignOut}>
+          <LogOut />
+          Log out
+        </SidebarMenuButton>
+      </SidebarFooter>
     </Sidebar>
   )
 }
 
 export default AppSidebar
+
+const activeClass = `bg-sidebar-accent text-sidebar-accent-foreground`

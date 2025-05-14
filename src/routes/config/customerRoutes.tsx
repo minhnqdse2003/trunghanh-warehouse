@@ -47,7 +47,7 @@ export const customerRoutes: RoutesProps = {
     {
       key: 'customer-create',
       label: 'Tạo khách hàng mới',
-      url: '/customer/create', // Corrected from "list" to "create" for clarity
+      url: '/customer/create',
       element: <CreateCustomerPage />,
       allowedRoles: [ROLES.SALES_ADMIN],
     },
