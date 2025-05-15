@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import type { ClassValue } from 'class-variance-authority/types'
 
-export const LoadingSpinner = (className?: ClassValue) => {
+export const LoadingSpinner = (className?: { className?: ClassValue }) => {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
@@ -13,7 +13,7 @@ export const LoadingSpinner = (className?: ClassValue) => {
       strokeWidth='2'
       strokeLinecap='round'
       strokeLinejoin='round'
-      className={cn('animate-spin', className)}>
+      className={cn('animate-spin', className?.className)}>
       <path d='M21 12a9 9 0 1 1-6.219-8.56' />
     </svg>
   )

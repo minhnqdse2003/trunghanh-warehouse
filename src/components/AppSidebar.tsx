@@ -30,13 +30,13 @@ const AppSidebar = () => {
   const location = useLocation()
 
   const handleMenuClick = (url: string) => {
-    navigate(url, { replace: true, flushSync: true })
+    navigate(url)
   }
 
   const menu = filterRoutesByRole(role!, routes)
 
   return (
-    <Sidebar className='rounded-tr-md rounded-br-md overflow-hidden shadow-[0_3px_10px_rgb(0,0,0,0.2)]'>
+    <Sidebar>
       <SidebarHeader className='items-center'>
         <Logo className='w-full h-[100px]' />
         <Separator />
@@ -101,7 +101,7 @@ const AppSidebar = () => {
         <Separator />
         <SidebarMenuButton className='cursor-pointer' onClick={onUserSignOut}>
           <LogOut />
-          Log out
+          Đăng xuất
         </SidebarMenuButton>
       </SidebarFooter>
     </Sidebar>

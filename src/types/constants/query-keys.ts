@@ -3,4 +3,7 @@ export const QUERY_KEYS = {
   LOGIN: 'user-login',
   WHO_AM_I: 'user-identity',
   SIDEBAR_COLLAPSED: 'side-bar-state',
+  CUSTOMER: 'customers',
+  CREATE: 'create',
+  GET: 'get',
 }

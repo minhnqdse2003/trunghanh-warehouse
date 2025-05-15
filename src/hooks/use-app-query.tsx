@@ -24,5 +24,5 @@ export function useAppQuery<TData>(props: UseAppQueryOptions<TData>) {
     createErrorHandler(navigate, onUserSignOut)(query.error)
   }
 
-  return { query }
+  return query
 }

@@ -39,11 +39,11 @@ const AppBreadcrumb = () => {
       {breadcrumbItem.map((item, idx) => (
         <>
           <BreadcrumbItem key={item.key} className='truncate'>
-            <BreadcrumbLink href={item.url}>
+            <BreadcrumbLink
+              href={item.url}
+              className='hover:text-[var(--color-sidebar-accent)]'>
               {idx === breadcrumbItem.length - 1 ? (
-                <strong className='hover:text-[var(--color-sidebar-accent)]'>
-                  {item.title}
-                </strong>
+                <strong>{item.title}</strong>
               ) : (
                 item.title
               )}

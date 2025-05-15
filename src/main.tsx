@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import '@fontsource-variable/nunito-sans'
+import '@fontsource-variable/montserrat'
 import { RouterProvider } from 'react-router-dom'
 import router from './routes/index.tsx'
 import { Toaster } from '@/components/ui/sonner'

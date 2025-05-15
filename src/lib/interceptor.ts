@@ -3,11 +3,22 @@ import { authQueryClient } from './query-client.auth'
 import { QUERY_KEYS } from '@/types/constants/query-keys'
 import { ERROR_MESSAGE } from '@/types/constants/error-messages'
 
-export const apiClient = async (
+export function apiClient<TData>(
+  endpoint: string,
+  options?: RequestInit,
+  isBlob?: false,
+): Promise<TData>
+export function apiClient(
+  endpoint: string,
+  options?: RequestInit,
+  isBlob?: true,
+): Promise<Blob>
+
+export async function apiClient<TData>(
   endpoint: string,
   options: RequestInit = {},
   isBlob = false,
-) => {
+): Promise<TData | Blob> {
   const authData = authQueryClient.getQueryData<AuthenticationInformationData>([
     QUERY_KEYS.AUTH,
   ])
@@ -80,5 +91,5 @@ export const apiClient = async (
     return response.blob()
   }
 
-  return response.json()
+  return response.json() as Promise<TData>
 }
