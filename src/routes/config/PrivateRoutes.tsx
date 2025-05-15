@@ -11,7 +11,7 @@ const PrivateRoutes = ({
 }) => {
   const { role } = useAuth()
 
-  if (!allowedRoles.includes(role)) {
+  if (role && !allowedRoles.includes(role)) {
     return <Navigate to={'403'} replace />
   }
 

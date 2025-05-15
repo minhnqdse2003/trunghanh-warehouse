@@ -1,16 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { UseMutationResult } from '@tanstack/react-query'
 import type { JSX } from 'react'
 
 // Overload 1: With Empty component
-export function matchMutationStatus<TData, TContext, TVariables>(
-  mutation: UseMutationResult<TData, Error, TVariables, TContext>,
-  {
-    Loading,
-    Errored,
-    Success,
-    Idle,
-  }: MatchMutationStatusOptions<TData, TContext>,
+export function matchMutationStatus<TData, TVariables>(
+  mutation: UseMutationResult<TData, Error, TVariables>,
+  { Loading, Errored, Success, Idle }: MatchMutationStatusOptions<TData>,
 ): JSX.Element {
   if (mutation.isPending) return Loading
   if (mutation.isError) Errored(mutation.error)
@@ -20,7 +14,7 @@ export function matchMutationStatus<TData, TContext, TVariables>(
   return Idle
 }
 
-export interface MatchMutationStatusOptions<TData, TContext> {
+export interface MatchMutationStatusOptions<TData> {
   Idle: JSX.Element
   Loading: JSX.Element
   Errored: (error: Error) => void
