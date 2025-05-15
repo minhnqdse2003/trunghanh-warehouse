@@ -67,7 +67,7 @@ const Layout = () => {
         className={cn(
           'flex flex-col transition-[width] duration-200 ease-linear bg-gray-50 relative',
           !collapsed || isMobile
-            ? 'w-full'
+            ? 'w-full [&>nav]:px-0 [&>nav]:my-0 [&>nav>[data-slot=card]]:rounded-none'
             : 'w-[calc(100%-var(--sidebar-width))]',
         )}>
         <nav
@@ -75,7 +75,7 @@ const Layout = () => {
             'flex flex-col w-full h-fit my-4 px-[var(--layout-content-pd)] sticky right-0 top-0 z-10 transition-transform duration-300 ease-in-out',
             isNavbarVisible ? 'translate-y-0' : '-translate-y-full',
           )}>
-          <Card className='w-full flex-row justify-between px-5 py-2 rounded-none'>
+          <Card className='w-full flex-row justify-between px-5 py-2'>
             <div className='flex items-center gap-2'>
               <SidebarTrigger
                 onClick={onClickCollapsedSidebar}
@@ -83,18 +83,17 @@ const Layout = () => {
               />
               <AppBreadcrumb />
             </div>
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center gap-1'>
               <Avatar className='cursor-pointer'>
                 <AvatarFallback>{user?.fullName[0]}</AvatarFallback>
               </Avatar>
               <div className='text-sm font-medium'>
                 <p className='leading-4'>{user?.fullName}</p>
-                <p className='text-xs text-gray-400'>{user?.roleName}</p>
               </div>
             </div>
           </Card>
         </nav>
-        <div className='mx-[var(--layout-content-pd)]'>
+        <div className={!isMobile ? 'mx-[var(--layout-content-pd)]' : ''}>
           <Outlet />
         </div>
       </div>

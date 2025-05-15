@@ -1,6 +1,8 @@
 import type { Customer } from '@/types/customer/customer.type'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '../ui/checkbox'
+import { Badge } from '../ui/badge'
+import { CheckCircle2, Dot, OctagonAlert } from 'lucide-react'
 
 const customerColumnDef: ColumnDef<Customer>[] = [
   {
@@ -61,7 +63,20 @@ const customerColumnDef: ColumnDef<Customer>[] = [
   {
     accessorKey: 'isLoyal',
     header: 'Khách hàng thân thiết',
-    cell: ({ getValue }) => (getValue() ? 'Có' : 'Không'),
+    cell: ({ getValue }) =>
+      getValue() ? (
+        <Badge className='w-full bg-[var(--success-foreground)] text-[var(--success-primary)] [&>svg]:size-3'>
+          <CheckCircle2 />
+          Có
+        </Badge>
+      ) : (
+        <Badge
+          className='w-full bg-[var(--warning-foreground)] text-[var(--warning-primary)] [&>svg]:size-3'
+          variant='secondary'>
+          <OctagonAlert />
+          Không
+        </Badge>
+      ),
     enableSorting: true,
   },
   {
@@ -71,7 +86,12 @@ const customerColumnDef: ColumnDef<Customer>[] = [
       const status = getValue()
       switch (status) {
         case 1:
-          return 'Hoạt động'
+          return (
+            <Badge className='w-full bg-[var(--success-foreground)] text-[var(--success-primary)] [&>svg]:size-3'>
+              <Dot className='animate-ping' />
+              Hoạt động
+            </Badge>
+          )
         case 2:
           return 'Không hoạt động'
         default:

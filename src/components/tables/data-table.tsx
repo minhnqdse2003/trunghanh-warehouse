@@ -58,29 +58,15 @@ export function DataTable<
     },
   })
 
-  const getStyleForFirstAndLastColumn = (
-    idx: number,
-    length: number,
-  ): string => {
-    if (idx === 0) return 'border-l-0'
-    if (idx === length - 1) return 'border-r-0'
-    return 'border-l-1 border-r-1'
-  }
-
   return (
     <>
-      <Table>
+      <Table className='border rounded-2xl overflow-clip'>
         <TableHeader>
           {table.getHeaderGroups().map(headerGroup => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header, idx) => {
+              {headerGroup.headers.map(header => {
                 return (
-                  <TableHead
-                    key={header.id}
-                    className={getStyleForFirstAndLastColumn(
-                      idx,
-                      headerGroup.headers.length,
-                    )}>
+                  <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -124,13 +110,8 @@ export function DataTable<
                       : ''
                   }
                   data-state={row.getIsSelected() && 'selected'}>
-                  {row.getVisibleCells().map((cell, idx) => (
-                    <TableCell
-                      key={cell.id}
-                      className={getStyleForFirstAndLastColumn(
-                        idx,
-                        row.getVisibleCells().length,
-                      )}>
+                  {row.getVisibleCells().map(cell => (
+                    <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),

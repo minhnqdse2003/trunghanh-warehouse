@@ -78,8 +78,8 @@ const SignInPage = () => {
   }
 
   return (
-    <div className='w-svw h-svh flex justify-center items-center'>
-      <Card className='w-full h-full flex justify-center md:w-1/2 md:h-fit'>
+    <div className='w-svw h-svh flex justify-center items-center bg-[url("/src/assets/backdrop.svg")] bg-no-repeat bg-center bg-cover'>
+      <Card className='w-full h-full flex justify-center md:w-1/3 md:h-fit'>
         <CardHeader className='justify-center text-center '>
           <Logo className='w-full' />
           <CardTitle className='truncate'>Chào Mừng Quay Trở Lại</CardTitle>
@@ -89,7 +89,7 @@ const SignInPage = () => {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 '>
               <FormField
                 control={form.control}
                 name='username'
@@ -135,12 +135,14 @@ const SignInPage = () => {
                   </FormItem>
                 )}
               />
-              <Button
-                className='w-full hover:cursor-pointer'
-                loading={mutation.isPending}
-                type='submit'>
-                Đăng nhập
-              </Button>
+              <FormItem className='w-full flex justify-center'>
+                <Button
+                  className='w-[90%] py-6 text-lg hover:cursor-pointer'
+                  loading={mutation.isPending}
+                  type='submit'>
+                  Đăng nhập
+                </Button>
+              </FormItem>
             </form>
           </Form>
         </CardContent>
