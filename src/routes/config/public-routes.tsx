@@ -25,4 +25,11 @@ export const publicRoutes: RoutesProps[] = [
     hidden: true,
     element: <Forbidden />,
   },
+  {
+    key: 'internal-server-error',
+    label: 'Server tạm dừng hoạt động',
+    url: '500',
+    hidden: true,
+    element: <></>,
+  },
 ]

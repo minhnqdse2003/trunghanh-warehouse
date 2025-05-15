@@ -1,5 +1,5 @@
 import { Route } from 'react-router-dom'
-import PrivateRoutes from '../config/PrivateRoutes'
+import PrivateRoutes from '../config/private-routes'
 import type { RoutesProps } from '../types'
 import { hasAuthorizeByRole } from './accessControl'
 

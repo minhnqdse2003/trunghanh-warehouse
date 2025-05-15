@@ -8,7 +8,7 @@ import { filterPublicRoutes } from './utils/routeFilters'
 import { routes } from './config'
 import Layout from '@/components/Layout'
 import { generatePrivateRoutes } from './utils/privateRouteGenerator'
-import ProtectedRoutes from './config/ProtectedRoutes'
+import ProtectedRoutes from './config/protected-routes'
 
 const renderPublicDom = () => {
   return filterPublicRoutes(routes).map(route => (
