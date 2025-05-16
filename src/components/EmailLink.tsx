@@ -14,7 +14,7 @@ const EmailLink: React.FC<EmailLinkProps> = ({
 }) => (
   <Link
     target='_blank'
-    to={`https://mail.google.com/mail/?view=cm&fs=1&to=${email}`}
+    to={`mailto:${email}`}
     className={`text-sm text-primary [&>svg]:size-4 flex justify-start items-center gap-1 w-fit border-b border-primary ${className}`}>
     {children || email}
   </Link>
