@@ -72,7 +72,7 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.141 0.005 285.823);
   --primary: var(--curious-blue-500);
-  --primary-foreground: oklch(0.982 0.018 155.826);
+  --primary-foreground: var(--curious-blue-100);
   --secondary: oklch(0.967 0.001 286.375);
   --secondary-foreground: oklch(0.21 0.006 285.885);
   --muted: oklch(0.967 0.001 286.375);
@@ -143,4 +143,20 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.status-active {
+  @apply bg-[var(--success-foreground)] text-[var(--success-primary)] font-semibold;
+}
+
+.status-primary {
+  @apply bg-primary-foreground text-primary font-semibold;
+}
+
+.status-secondary {
+  @apply bg-muted-foreground/70 text-muted font-semibold;
+}
+
+.status-inactive {
+  @apply bg-[var(--warning-foreground)] text-[var(--warning-primary)] font-semibold;
 }

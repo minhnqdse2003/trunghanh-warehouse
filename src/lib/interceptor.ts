@@ -50,6 +50,9 @@ export async function apiClient<TData>(
       {
         method: 'POST',
         body: JSON.stringify({ refreshToken: authData.refreshToken }),
+        headers: {
+          'content-type': 'application/json',
+        },
       },
     )
     if (!refreshTokenResponse.ok) {

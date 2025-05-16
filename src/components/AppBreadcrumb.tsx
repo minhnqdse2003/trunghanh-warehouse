@@ -37,7 +37,7 @@ const AppBreadcrumb = () => {
   return (
     <BreadcrumbList className='flex-nowrap hidden md:flex'>
       {breadcrumbItem.map((item, idx) => (
-        <>
+        <React.Fragment key={item.key}>
           <BreadcrumbItem key={item.key} className='truncate'>
             <BreadcrumbLink
               href={item.url}
@@ -52,7 +52,7 @@ const AppBreadcrumb = () => {
             </BreadcrumbLink>
           </BreadcrumbItem>
           {idx + 1 < breadcrumbItem.length && <BreadcrumbSeparator />}
-        </>
+        </React.Fragment>
       ))}
     </BreadcrumbList>
   )

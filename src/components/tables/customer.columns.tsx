@@ -1,4 +1,4 @@
-import type { Customer } from '@/types/customer/customer.type'
+import type { Customer } from '@/types/customer/customer.type.data'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '../ui/checkbox'
 import { Badge } from '../ui/badge'

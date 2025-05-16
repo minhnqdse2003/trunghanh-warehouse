@@ -27,22 +27,34 @@ const Layout = () => {
   }, [])
 
   useEffect(() => {
+    // Initialize with the starting scroll position
+    lastScrollY.current = window.scrollY
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY
+      const scrollDifference = currentScrollY - lastScrollY.current
 
-      if (currentScrollY > lastScrollY.current) {
-        setIsNavbarVisible(false)
-      } else {
-        setIsNavbarVisible(true)
+      if (Math.abs(scrollDifference) > 5) {
+        if (scrollDifference > 0) {
+          setIsNavbarVisible(false)
+        } else {
+          setIsNavbarVisible(true)
+        }
+        lastScrollY.current = currentScrollY
       }
-
-      lastScrollY.current = currentScrollY
     }
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
+    let scrollTimer: NodeJS.Timeout | string | number | undefined
+    const debouncedHandleScroll = () => {
+      if (scrollTimer) clearTimeout(scrollTimer)
+      scrollTimer = setTimeout(handleScroll, 10)
+    }
+
+    window.addEventListener('scroll', debouncedHandleScroll)
 
     return () => {
-      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('scroll', debouncedHandleScroll)
+      if (scrollTimer) clearTimeout(scrollTimer)
     }
   }, [])
 

@@ -18,32 +18,40 @@ import {
 import type { PaginationRequest } from '@/types/pagination.type.req'
 import { Button } from '../ui/button'
 import { LoadingSpinner } from '../LoadingSpiner'
-import { type ReactNode } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
+import { matchQueryStatus } from '@/utils/matchQueryStatus'
+import type { UseQueryResult } from '@tanstack/react-query'
+import type { BaseResponse } from '@/types/base.type.res'
+import { useMemo } from 'react'
 
-interface DataTableProps<TData, TColumns, TFilterParams> {
+interface DataTableProps<
+  TData,
+  TColumns,
+  TFilterParams,
+  TQuery extends BaseResponse<TData>,
+> {
   columns: ColumnDef<TData, TColumns>[]
-  data: TData[]
+  query: UseQueryResult<TQuery, Error>
   filter: {
     params: TFilterParams
     setPagination: React.Dispatch<React.SetStateAction<PaginationState>>
     rowCount: number
   }
-  loading: boolean
 }
 
 export function DataTable<
   TData,
-  TValue,
+  TColumns,
   TFilterParams extends PaginationRequest,
+  TQuery extends BaseResponse<TData>,
 >({
   columns,
-  data,
+  query,
   filter,
-  loading,
-}: Readonly<DataTableProps<TData, TValue, TFilterParams>>) {
+}: Readonly<DataTableProps<TData, TColumns, TFilterParams, TQuery>>) {
+  const defaultFallback = useMemo(() => [], [])
   const table = useReactTable({
-    data,
+    data: query.data?.items ?? defaultFallback,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -80,48 +88,42 @@ export function DataTable<
           ))}
         </TableHeader>
         <TableBody>
-          {matchQueryStatus(
-            { loading, isEmpty: table.getRowModel().rows?.length === 0 },
-            {
-              empty: (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className='h-24 text-center'>
-                    Không có dữ liệu.
+          {matchQueryStatus<TData, TQuery>(query, {
+            Empty: (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className='h-24 text-center'>
+                  Không có dữ liệu.
+                </TableCell>
+              </TableRow>
+            ),
+            Loading: (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className='h-24 text-center'>
+                  <LoadingSpinner className='my-0 mx-auto' />
+                </TableCell>
+              </TableRow>
+            ),
+            Success: table.getRowModel().rows.map((row, idx) => (
+              <TableRow
+                key={row.id}
+                className={
+                  idx === table.getRowModel().rows.length - 1
+                    ? '[&>td]:border-b-0'
+                    : ''
+                }
+                data-state={row.getIsSelected() && 'selected'}>
+                {row.getVisibleCells().map(cell => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
-                </TableRow>
-              ),
-              loading: (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className='h-24 text-center'>
-                    <LoadingSpinner className='my-0 mx-auto' />
-                  </TableCell>
-                </TableRow>
-              ),
-              hasData: table.getRowModel().rows.map((row, idx) => (
-                <TableRow
-                  key={row.id}
-                  className={
-                    idx === table.getRowModel().rows.length - 1
-                      ? '[&>td]:border-b-0'
-                      : ''
-                  }
-                  data-state={row.getIsSelected() && 'selected'}>
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              )),
-            },
-          )}
+                ))}
+              </TableRow>
+            )),
+          })}
         </TableBody>
       </Table>
 
@@ -148,15 +150,4 @@ export function DataTable<
       )}
     </>
   )
-}
-
-const matchQueryStatus = (
-  condition: { loading: boolean; isEmpty: boolean },
-  render: { loading: ReactNode; empty: ReactNode; hasData: ReactNode },
-) => {
-  if (condition.loading) return render.loading
-  if (condition.isEmpty) {
-    return render.empty
-  }
-  return render.hasData
 }
