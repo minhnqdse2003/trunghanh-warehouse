@@ -42,6 +42,7 @@ export interface ButtonProps
   asChild?: boolean
   loading?: boolean
   children?: React.ReactNode
+  ref?: React.RefObject<any>
 }
 
 function Button({
@@ -51,6 +52,7 @@ function Button({
   asChild = false,
   loading,
   children,
+  ref,
   ...props
 }: Readonly<ButtonProps>) {
   const Comp = asChild ? Slot : 'button'
@@ -59,6 +61,7 @@ function Button({
     <Comp
       className={cn(buttonVariants({ variant, size, className }))}
       disabled={loading}
+      ref={ref}
       {...props}>
       {loading ? <LoadingSpinner /> : <Slottable>{children}</Slottable>}
     </Comp>

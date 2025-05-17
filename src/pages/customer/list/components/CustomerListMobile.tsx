@@ -1,4 +1,5 @@
 import EmailLink from '@/components/EmailLink'
+import MobileCustomerFilterComponents from '@/components/MobileCustomerFilterComponents'
 import PhoneNumberLink from '@/components/PhoneNumberLink'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -17,13 +18,16 @@ import {
 import { matchQueryStatus } from '@/utils/matchQueryStatus'
 import type { UseQueryResult } from '@tanstack/react-query'
 import { ChevronLeft, ChevronRight, Dot, Search } from 'lucide-react'
+import { useCallback } from 'react'
 
 interface ICustomerListMobile {
   filterParams: TCustomerFilterParams
+  setFilterParams: React.Dispatch<React.SetStateAction<TCustomerFilterParams>>
   searchValue: string
   onSearchValueChange: (value: string) => void
   query: UseQueryResult<TGetCustomerListResponse, Error>
   handlePageChange: (direction: 'next' | 'prev') => void
+  setSelectedCustomer: React.Dispatch<React.SetStateAction<Customer | null>>
 }
 
 const CustomerListMobile = ({
@@ -32,6 +36,8 @@ const CustomerListMobile = ({
   searchValue,
   query,
   handlePageChange,
+  setFilterParams,
+  setSelectedCustomer,
 }: ICustomerListMobile) => {
   const { isNextDisabled, isPrevDisabled, totalPages } = usePagination({
     pageIndex: filterParams.pageIndex,
@@ -39,16 +45,32 @@ const CustomerListMobile = ({
     totalCount: query.data?.totalCount,
   })
 
+  const handleOnFilterChange = useCallback(
+    (key: keyof TCustomerFilterParams, value: unknown) => {
+      setFilterParams(prev => ({ ...prev, [key]: value, pageIndex: 0 }))
+    },
+    [setFilterParams],
+  )
+
+  const resetFilter = useCallback(() => {
+    setFilterParams({ pageIndex: 0, pageSize: 10, Search: '' })
+  }, [])
+
   return (
     <div className='space-y-4'>
       {/* Search Input */}
-      <div className='relative'>
+      <div className='flex relative gap-4'>
         <Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
         <Input
           placeholder='Tìm kiếm khách hàng...'
           value={searchValue}
           onChange={e => onSearchValueChange(e.target.value)}
-          className='pl-8'
+          className='pl-8 grow'
+        />
+        <MobileCustomerFilterComponents
+          resetFilter={resetFilter}
+          filterParams={filterParams}
+          onFilterChange={handleOnFilterChange}
         />
       </div>
       {/* Customer List */}
@@ -58,6 +80,7 @@ const CustomerListMobile = ({
         Success: query.data?.items.map((customer, idx) => (
           <Card
             key={customer.customerId + idx}
+            onClick={() => setSelectedCustomer(customer)}
             className='w-full flex justify-between border-b-1 px-4 hover:bg-sidebar-accent-foreground transition-[background-color] duration-300'>
             <div className='flex flex-row justify-between items-center'>
               <div className='flex flex-col gap-4'>

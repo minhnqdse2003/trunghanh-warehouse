@@ -79,7 +79,7 @@ const Layout = () => {
         className={cn(
           'flex flex-col transition-[width] duration-200 ease-linear bg-gray-50 relative',
           !collapsed || isMobile
-            ? 'w-full [&>nav]:px-0 [&>nav]:my-0 [&>nav>[data-slot=card]]:rounded-none'
+            ? 'w-full [&>nav]:px-0 [&>nav]:mt-0 [&>nav>[data-slot=card]]:rounded-none'
             : 'w-[calc(100%-var(--sidebar-width))]',
         )}>
         <nav

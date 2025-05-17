@@ -29,5 +29,10 @@
     "noUncheckedSideEffectImports": true
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist", "src/components/ui/**/*"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/components/ui/**/*",
+    "src/components/date-picker.tsx"
+  ]
 }

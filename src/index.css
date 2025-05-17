@@ -157,6 +157,10 @@
   @apply bg-muted-foreground/70 text-muted font-semibold;
 }
 
+.badge-destructive {
+  @apply border-red-700 text-red-700;
+}
+
 .status-inactive {
   @apply bg-[var(--warning-foreground)] text-[var(--warning-primary)] font-semibold;
 }
