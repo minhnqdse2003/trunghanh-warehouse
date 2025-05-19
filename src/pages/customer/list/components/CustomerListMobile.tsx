@@ -1,4 +1,5 @@
 import EmailLink from '@/components/EmailLink'
+import { LoadingSpinner } from '@/components/LoadingSpiner'
 import MobileCustomerFilterComponents from '@/components/MobileCustomerFilterComponents'
 import PhoneNumberLink from '@/components/PhoneNumberLink'
 import { Badge } from '@/components/ui/badge'
@@ -75,8 +76,10 @@ const CustomerListMobile = ({
       </div>
       {/* Customer List */}
       {matchQueryStatus<Customer, TGetCustomerListResponse>(query, {
-        Loading: <></>,
-        Empty: <></>,
+        Loading: <LoadingSpinner className='mx-auto my-8' />,
+        Empty: (
+          <p className='mx-auto my-8 text-center'>Hiện không có dữ liệu</p>
+        ),
         Success: query.data?.items.map((customer, idx) => (
           <Card
             key={customer.customerId + idx}
@@ -140,9 +143,8 @@ const CustomerListMobile = ({
           </Card>
         )),
       })}
-
       {/* Pagination */}
-      {query.data?.items.length && (
+      {query.data && query.data.items.length > 0 && (
         <div className='flex justify-between items-center mt-4'>
           <Button
             variant='outline'

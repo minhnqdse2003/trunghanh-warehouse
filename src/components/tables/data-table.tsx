@@ -5,6 +5,7 @@ import {
   useReactTable,
   type ColumnDef,
   type PaginationState,
+  type RowSelectionState,
 } from '@tanstack/react-table'
 
 import {
@@ -23,6 +24,14 @@ import { matchQueryStatus } from '@/utils/matchQueryStatus'
 import type { UseQueryResult } from '@tanstack/react-query'
 import type { BaseResponse } from '@/types/base.type.res'
 import { useMemo } from 'react'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 interface DataTableProps<
   TData,
@@ -37,6 +46,12 @@ interface DataTableProps<
     setPagination: React.Dispatch<React.SetStateAction<PaginationState>>
     rowCount: number
   }
+  rowSelectionState?: {
+    rowSelections: RowSelectionState
+    onRowSelectionChange: React.Dispatch<
+      React.SetStateAction<RowSelectionState>
+    >
+  }
 }
 
 export function DataTable<
@@ -48,6 +63,7 @@ export function DataTable<
   columns,
   query,
   filter,
+  rowSelectionState,
 }: Readonly<DataTableProps<TData, TColumns, TFilterParams, TQuery>>) {
   const defaultFallback = useMemo(() => [], [])
   const table = useReactTable({
@@ -63,7 +79,10 @@ export function DataTable<
         pageIndex: filter.params.pageIndex,
         pageSize: filter.params.pageSize,
       },
+      rowSelection: rowSelectionState?.rowSelections,
     },
+    enableRowSelection: !!rowSelectionState,
+    onRowSelectionChange: rowSelectionState?.onRowSelectionChange,
   })
 
   return (
@@ -130,6 +149,25 @@ export function DataTable<
       {/* Pagination Controls */}
       {filter && (
         <div className='flex items-center justify-end space-x-2 py-4'>
+          <Label htmlFor='rows-per-page' className='text-sm font-medium'>
+            Dòng mỗi trang
+          </Label>
+          <Select
+            value={`${table.getState().pagination.pageSize}`}
+            onValueChange={value => {
+              table.setPageSize(Number(value))
+            }}>
+            <SelectTrigger className='w-20' id='rows-per-page'>
+              <SelectValue placeholder={table.getState().pagination.pageSize} />
+            </SelectTrigger>
+            <SelectContent side='top'>
+              {[10, 20, 30, 40, 50].map(pageSize => (
+                <SelectItem key={pageSize} value={`${pageSize}`}>
+                  {pageSize}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button
             variant='outline'
             size='sm'

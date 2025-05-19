@@ -4,6 +4,8 @@ import { Checkbox } from '../ui/checkbox'
 import { Badge } from '../ui/badge'
 import { CheckCircle2, Dot, OctagonAlert } from 'lucide-react'
 
+import DropdownComponent from '../DropdownComponent'
+
 const customerColumnDef: ColumnDef<Customer>[] = [
   {
     id: 'select',
@@ -33,38 +35,39 @@ const customerColumnDef: ColumnDef<Customer>[] = [
     accessorKey: 'customerId',
     header: 'Mã KH',
     enableSorting: true,
+    cell: ({ row }) => row.original.customerId ?? 'N/A',
   },
   {
     accessorKey: 'customerName',
     header: 'Tên khách hàng',
     enableSorting: true,
-    cell: ({ getValue }) => getValue() ?? 'N/A',
+    cell: ({ row }) => row.original.customerName ?? 'N/A',
   },
   {
     accessorKey: 'address',
     header: 'Địa chỉ',
-    cell: ({ getValue }) => getValue() ?? 'N/A',
+    cell: ({ row }) => row.original.address ?? 'N/A',
   },
   {
     accessorKey: 'phoneNumber',
     header: 'Số điện thoại',
-    cell: ({ getValue }) => getValue() ?? 'N/A',
+    cell: ({ row }) => row.original.phoneNumber ?? 'N/A',
   },
   {
     accessorKey: 'email',
     header: 'Email',
-    cell: ({ getValue }) => getValue() ?? 'N/A',
+    cell: ({ row }) => row.original.email ?? 'N/A',
   },
   {
     accessorKey: 'documentNumber',
     header: 'Số chứng từ',
-    cell: ({ getValue }) => getValue() ?? 'N/A',
+    cell: ({ row }) => row.original.documentNumber ?? 'N/A',
   },
   {
     accessorKey: 'isLoyal',
     header: 'Khách hàng thân thiết',
-    cell: ({ getValue }) =>
-      getValue() ? (
+    cell: ({ row }) =>
+      row.original.isLoyal ? (
         <Badge className='w-full bg-[var(--success-foreground)] text-[var(--success-primary)] [&>svg]:size-3'>
           <CheckCircle2 />
           Có
@@ -82,8 +85,8 @@ const customerColumnDef: ColumnDef<Customer>[] = [
   {
     accessorKey: 'status',
     header: 'Trạng thái',
-    cell: ({ getValue }) => {
-      const status = getValue()
+    cell: ({ row }) => {
+      const status = row.original.status
       switch (status) {
         case 1:
           return (
@@ -99,6 +102,19 @@ const customerColumnDef: ColumnDef<Customer>[] = [
       }
     },
     enableSorting: true,
+  },
+  {
+    id: 'action',
+    cell: ({ row, table }) => {
+      const onToggle = async () => {
+        await removeAllToggleSelected()
+        row.toggleSelected()
+      }
+      const removeAllToggleSelected = async () =>
+        table.toggleAllPageRowsSelected(false)
+
+      return <DropdownComponent onToggle={onToggle} />
+    },
   },
 ]
 
