@@ -63,7 +63,7 @@ const MobileCustomerFilterComponents = ({
           <DrawerTitle className='text-base flex justify-between items-center'>
             Bộ lọc{' '}
             <Badge
-              className='badge-destructive'
+              className='badge-destructive hover:cursor-pointer hover:bg-red-50'
               variant='outline'
               onClick={resetFilter}>
               <X /> Xóa bộ lọc

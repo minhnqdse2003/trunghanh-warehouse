@@ -13,6 +13,7 @@ const PhoneNumberLink: React.FC<PhoneNumberLinkProps> = ({
 }) => (
   <Link
     className={`text-sm text-primary [&>svg]:size-4 flex justify-start items-center gap-1 w-fit border-b border-primary ${className}`}
+    onClick={event => event.stopPropagation()}
     to={`tel:${phoneNumber}`}>
     <PhoneCall />
     {children || phoneNumber}

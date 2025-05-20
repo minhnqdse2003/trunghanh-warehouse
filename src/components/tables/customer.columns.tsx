@@ -4,8 +4,6 @@ import { Checkbox } from '../ui/checkbox'
 import { Badge } from '../ui/badge'
 import { CheckCircle2, Dot, OctagonAlert } from 'lucide-react'
 
-import DropdownComponent from '../DropdownComponent'
-
 const customerColumnDef: ColumnDef<Customer>[] = [
   {
     id: 'select',
@@ -102,19 +100,6 @@ const customerColumnDef: ColumnDef<Customer>[] = [
       }
     },
     enableSorting: true,
-  },
-  {
-    id: 'action',
-    cell: ({ row, table }) => {
-      const onToggle = async () => {
-        await removeAllToggleSelected()
-        row.toggleSelected()
-      }
-      const removeAllToggleSelected = async () =>
-        table.toggleAllPageRowsSelected(false)
-
-      return <DropdownComponent onToggle={onToggle} />
-    },
   },
 ]
 

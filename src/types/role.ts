@@ -13,6 +13,14 @@ export const ROLES: Record<RoleKey, number> = Object.fromEntries(
   roleConfig.map(({ key, id }) => [key, id]),
 ) as Record<RoleKey, number>
 
+export const ALLOWED_ALL_ACCESS = [
+  ROLES.ACCOUNTANT,
+  ROLES.ADMIN,
+  ROLES.DIRECTOR,
+  ROLES.INVENTORY_MANAGER,
+  ROLES.SALES_ADMIN,
+]
+
 export const ROLES_NAME: Record<RoleKey, string> = Object.fromEntries(
   roleConfig.map(({ key, name }) => [key, name]),
 ) as Record<RoleKey, string>

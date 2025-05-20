@@ -5,34 +5,47 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import useAuth from '@/hooks/use-auth'
 import { Edit3, Eye, MoreVerticalIcon, Trash } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 interface IDropdownComponent {
-  onToggle: () => void
+  onToggle: (type: TOnToggleProps) => void
+  allowedRoles: {
+    edit: Array<number>
+    details: Array<number>
+    remove: Array<number>
+  }
 }
 
+export type TOnToggleProps = 'edit' | 'details' | 'remove'
+
 interface DropdownItem {
-  key: string
+  key: TOnToggleProps
   name: string
   icon: ReactNode
-  onPerform?: () => void
+  onPerform?: (type: TOnToggleProps) => void
   variant?: 'default' | 'destructive'
+  visible: boolean
 }
 
 const DropdownComponent = (props: IDropdownComponent) => {
-  const dropdownItems: Array<DropdownItem> = [
+  const { role } = useAuth()
+
+  const dropdownItems = [
     {
       key: 'edit',
       name: 'Chỉnh sửa',
       icon: <Edit3 />,
       onPerform: props.onToggle,
+      visible: props.allowedRoles.edit.includes(role ?? -1),
     },
     {
       key: 'details',
       name: 'Chi tiết',
       icon: <Eye />,
       onPerform: props.onToggle,
+      visible: props.allowedRoles.details.includes(role ?? -1),
     },
     {
       key: 'remove',
@@ -40,8 +53,9 @@ const DropdownComponent = (props: IDropdownComponent) => {
       icon: <Trash />,
       onPerform: props.onToggle,
       variant: 'destructive',
+      visible: props.allowedRoles.remove.includes(role ?? -1),
     },
-  ].filter(item => item.onPerform) as Array<DropdownItem>
+  ] as Array<DropdownItem>
 
   return (
     <DropdownMenu>
@@ -54,15 +68,19 @@ const DropdownComponent = (props: IDropdownComponent) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-32'>
-        {dropdownItems.map(item => (
-          <DropdownMenuItem
-            onClick={() => item.onPerform && item.onPerform()}
-            key={item.key}
-            variant={item.variant ?? 'default'}>
-            {item.icon}
-            {item.name}
-          </DropdownMenuItem>
-        ))}
+        {dropdownItems
+          .filter(item => item.onPerform)
+          .filter(item => item.visible)
+          .map(item => (
+            <DropdownMenuItem
+              onClick={() => item.onPerform && item.onPerform(item.key)}
+              key={item.key}
+              className='hover:cursor-pointer'
+              variant={item.variant ?? 'default'}>
+              {item.icon}
+              {item.name}
+            </DropdownMenuItem>
+          ))}
       </DropdownMenuContent>
     </DropdownMenu>
   )

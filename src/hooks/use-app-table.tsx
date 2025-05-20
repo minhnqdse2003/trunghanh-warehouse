@@ -36,6 +36,10 @@ export function useAppTable<TData, TFilter extends BaseFilter<unknown>>() {
     }))
   }, [])
 
+  const resetFilter = useCallback(() => {
+    setFilterParams({ pageIndex: 0, pageSize: 10, Search: '' } as TFilter)
+  }, [])
+
   return {
     filterParams,
     setFilterParams,
@@ -47,5 +51,6 @@ export function useAppTable<TData, TFilter extends BaseFilter<unknown>>() {
     selectedRowData,
     setSelectedRowData,
     handlePageChange,
+    resetFilter,
   }
 }

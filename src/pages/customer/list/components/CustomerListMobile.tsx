@@ -87,18 +87,15 @@ const CustomerListMobile = ({
             className='w-full flex justify-between border-b-1 px-4 hover:bg-sidebar-accent-foreground transition-[background-color] duration-300'>
             <div className='flex flex-row justify-between items-center'>
               <div className='flex flex-col gap-4'>
-                <p className='flex gap-4 font-medium flex-wrap'>
-                  <span className='flex-grow flex-shrink-0'>
+                <p className='flex gap-2 font-medium flex-wrap'>
+                  <span className='flex-grow basis-auto'>
                     {customer.customerName}
                   </span>
                   <PhoneNumberLink
-                    className='flex-shrink-0 basis-auto'
+                    className='basis-auto'
                     phoneNumber={customer.phoneNumber}
                   />
-                  <EmailLink
-                    email={customer.email}
-                    className='flex-shrink-0 basis-auto'
-                  />
+                  <EmailLink email={customer.email} className='basis-auto' />
                 </p>
                 <p className='font-medium'>
                   Mã tài liệu:{' '}
