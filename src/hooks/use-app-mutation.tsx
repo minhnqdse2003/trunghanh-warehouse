@@ -2,6 +2,7 @@ import { createErrorHandler } from '@/utils/matchError'
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import useAuth from './use-auth'
+import { queryClient } from '@/lib/query-client'
 
 interface UseAppMutationOptions<
   TData,
@@ -33,6 +34,15 @@ export function useAppMutation<TData, TVariables = unknown, TContext = unknown>(
   if (mutation.isError) {
     createErrorHandler(navigate, onUserSignOut)(mutation.error)
     mutation.reset()
+  }
+
+  if (mutation.isSuccess) {
+    queryClient.invalidateQueries({
+      predicate: query =>
+        query.queryKey.some((queryKey: unknown) =>
+          mutationKey?.includes(queryKey),
+        ),
+    })
   }
 
   return mutation

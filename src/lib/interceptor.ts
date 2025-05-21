@@ -3,7 +3,7 @@ import { authQueryClient } from './query-client.auth'
 import { QUERY_KEYS } from '@/types/constants/query-keys'
 import { ERROR_MESSAGE } from '@/types/constants/error-messages'
 
-export function apiClient<TData>(
+export function apiClient<TData = unknown>(
   endpoint: string,
   options?: RequestInit,
   isBlob?: false,

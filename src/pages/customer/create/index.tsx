@@ -14,7 +14,7 @@ import { apiClient } from '@/lib/interceptor'
 import { CustomerControllerEndpoints } from '@/services'
 import { QUERY_KEYS } from '@/types/constants/query-keys'
 import type { TCreateCustomerForm } from '@/types/customer/customer.type.req'
-import { customerFormSchema } from '@/types/customer/customer.type.schema'
+import { createCustomerFormSchema } from '@/types/customer/customer.type.schema'
 import { joinZodMessage } from '@/utils/matchError'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -22,7 +22,7 @@ import { toast } from 'sonner'
 
 const CreateCustomerPage = () => {
   const form = useForm<TCreateCustomerForm>({
-    resolver: zodResolver(customerFormSchema),
+    resolver: zodResolver(createCustomerFormSchema),
     defaultValues: {
       customerName: '',
       address: '',
@@ -45,7 +45,7 @@ const CreateCustomerPage = () => {
   })
 
   const onSubmit = (values: TCreateCustomerForm) => {
-    const validatedCustomerFormData = customerFormSchema.safeParse(values)
+    const validatedCustomerFormData = createCustomerFormSchema.safeParse(values)
     const { data } = validatedCustomerFormData
     if (data) {
       console.log(data)

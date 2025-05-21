@@ -5,5 +5,6 @@ export const QUERY_KEYS = {
   SIDEBAR_COLLAPSED: 'side-bar-state',
   CUSTOMER: 'customers',
   CREATE: 'create',
+  UPDATE: 'update',
   GET: 'get',
 }

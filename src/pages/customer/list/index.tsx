@@ -10,35 +10,34 @@ import {
 import { useAppQuery } from '@/hooks/use-app-query'
 import { QUERY_KEYS } from '@/types/constants/query-keys'
 import type { Customer } from '@/types/customer/customer.type.data'
-import type { TCustomerFilterParams } from '@/types/customer/customer.type.req'
+import { type TCustomerFilterParams } from '@/types/customer/customer.type.req'
 import type { TGetCustomerListResponse } from '@/types/customer/customer.type.res'
 import { useCallback, useEffect, useState } from 'react'
 import { useIsMobile } from '@/hooks/use-mobile'
 import CustomerListMobile from './components/CustomerListMobile'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Dot, Locate, Mail, PhoneCall, Search } from 'lucide-react'
+import { ArrowLeft, Search } from 'lucide-react'
 import { useAppTable } from '@/hooks/use-app-table'
-import { getCustomerList } from '@/services/customer-service'
+import {
+  getCustomerList,
+  updateCustomer,
+  type IUpdateCustomer,
+} from '@/services/customer-service'
 import { Input } from '@/components/ui/input'
 import MobileCustomerFilterComponents from '@/components/MobileCustomerFilterComponents'
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import DropdownComponent, {
-  type TOnToggleProps,
-} from '@/components/DropdownComponent'
-import { ALLOWED_ALL_ACCESS, ROLES } from '@/types/role'
-import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
-import { Badge } from '@/components/ui/badge'
-import { matchCustomerLoyalColor } from '@/utils/matchCustomerStatus'
-import EmailLink from '@/components/EmailLink'
+import { type TOnToggleProps } from '@/components/DropdownComponent'
+import CustomerDetailsDialog from './components/CustomerDetailsDialog'
+import CustomerActionCell from './components/CustomerActionCell'
+import { useAppMutation } from '@/hooks/use-app-mutation'
+import CustomerEditDialog from './components/CustomerEditDialog'
 
 const CustomerListPage = () => {
+  const [dialog, setDialog] = useState<Record<TOnToggleProps, boolean>>({
+    edit: false,
+    details: false,
+    remove: false,
+  })
+
   const {
     filterParams,
     setFilterParams,
@@ -61,11 +60,25 @@ const CustomerListPage = () => {
     queryKey: [QUERY_KEYS.CUSTOMER, QUERY_KEYS.GET, filterParams],
   })
 
-  const [dialog, setDialog] = useState<Record<TOnToggleProps, boolean>>({
-    edit: false,
-    details: false,
-    remove: false,
+  const updateCustomerMutation = useAppMutation<unknown, IUpdateCustomer>({
+    mutationFn: request => updateCustomer(request),
+    mutationKey: [QUERY_KEYS.CUSTOMER, QUERY_KEYS.UPDATE],
+    options: {
+      onSuccess: () => {
+        onCloseDialog('edit')
+      },
+    },
   })
+
+  const onMutateCustomerData = (data: IUpdateCustomer) => {
+    updateCustomerMutation.mutate(data)
+  }
+
+  const onCloseDialog = (type: TOnToggleProps) => {
+    handleDialogToggle(type)
+    setSelectedRowData(null)
+    setRowSelection({})
+  }
 
   const handleOnFilterChange = useCallback(
     (key: keyof TCustomerFilterParams, value: unknown) => {
@@ -73,6 +86,15 @@ const CustomerListPage = () => {
     },
     [setFilterParams],
   )
+
+  const handleDialogToggle = useCallback((type: TOnToggleProps) => {
+    setDialog(prev => ({
+      ...prev,
+      edit: type === 'edit' ? !prev.edit : false,
+      details: type === 'details' ? !prev.details : false,
+      remove: type === 'remove' ? !prev.remove : false,
+    }))
+  }, [])
 
   useEffect(() => {
     setFilterParams(prev => ({
@@ -83,10 +105,8 @@ const CustomerListPage = () => {
   }, [debouncedSearchTerm, setFilterParams])
 
   useEffect(() => {
-    const value: boolean[] = Object.keys(dialog).map(
-      key => dialog[key as keyof typeof dialog],
-    )
-    if (value.some(existTrueValue => existTrueValue)) {
+    const isAnyDialogOpen = Object.values(dialog).some(value => value)
+    if (isAnyDialogOpen) {
       setSelectedRowData(
         query.data?.items[Object.keys(rowSelection)[0] as unknown as number] ??
           null,
@@ -94,17 +114,7 @@ const CustomerListPage = () => {
     } else {
       setSelectedRowData(null)
     }
-
-    return () => setSelectedRowData(null)
-  }, [
-    dialog,
-    dialog.details,
-    dialog.edit,
-    dialog.remove,
-    query.data?.items,
-    rowSelection,
-    setSelectedRowData,
-  ])
+  }, [dialog, query.data?.items, rowSelection, setSelectedRowData])
 
   return (
     <>
@@ -154,41 +164,13 @@ const CustomerListPage = () => {
                 ...CustomerColumnsDefOptions.base,
                 {
                   id: 'action',
-                  cell: ({ row, table }) => {
-                    const onToggle = async (type: TOnToggleProps) => {
-                      await removeAllToggleSelected()
-                      row.toggleSelected()
-                      updateDialogOpenStatus(type)
-                    }
-                    const removeAllToggleSelected = async () =>
-                      table.toggleAllPageRowsSelected(false)
-
-                    const updateDialogOpenStatus = async (
-                      toggleType: TOnToggleProps,
-                    ) => {
-                      const newDialogState = Object.keys(dialog).reduce<
-                        typeof dialog
-                      >(
-                        (acc, key) => ({
-                          ...acc,
-                          [key]: key === toggleType,
-                        }),
-                        dialog,
-                      )
-                      setDialog(newDialogState)
-                    }
-
-                    return (
-                      <DropdownComponent
-                        allowedRoles={{
-                          edit: [ROLES.SALES_ADMIN, ROLES.ADMIN],
-                          details: ALLOWED_ALL_ACCESS,
-                          remove: [ROLES.ADMIN],
-                        }}
-                        onToggle={onToggle}
-                      />
-                    )
-                  },
+                  cell: ({ row, table }) => (
+                    <CustomerActionCell
+                      row={row}
+                      table={table}
+                      onToggle={handleDialogToggle}
+                    />
+                  ),
                 },
               ]}
               filter={{
@@ -204,6 +186,7 @@ const CustomerListPage = () => {
           )}
         </CardContent>
       </Card>
+      {/* Mobile dialog */}
       <div
         className={`w-full h-full bg-white shadow-lg transition-all duration-500 ease-linear${
           selectedRowData && isMobile
@@ -233,71 +216,24 @@ const CustomerListPage = () => {
           </div>
         )}
       </div>
-      {selectedRowData && dialog.details && (
-        <Dialog
-          defaultOpen={dialog.details}
-          onOpenChange={open =>
-            setDialog(prev => ({ ...prev, details: open }))
-          }>
-          <DialogContent className='min-w-2/5 fixed left-full translate-x-[-102%] h-[95vh] overflow-y-auto flex flex-col'>
-            <DialogHeader>
-              <DialogTitle>
-                <span className='text-base font-semibold'>
-                  {`Thông tin khách hàng - ${selectedRowData.customerName}`}{' '}
-                  <Badge
-                    className={matchCustomerLoyalColor(
-                      selectedRowData.isLoyal,
-                    )}>
-                    <Dot className='animate-ping' />
-                    {selectedRowData.isLoyal
-                      ? 'Khách hàng thân thiết'
-                      : 'Khách hàng thường'}
-                  </Badge>
-                </span>
-              </DialogTitle>
-            </DialogHeader>
-            <div className='mt-4 space-y-4 basis-auto grow shrink-0'>
-              <div className='flex items-center'>
-                <Label className='text-gray-600 basis-1/4'>
-                  <Mail /> <span>Email:</span>
-                </Label>
-                <span className='font-medium text-sm grow'>
-                  <EmailLink email={selectedRowData.email} isMobile={false} />
-                </span>
-              </div>
-              <Separator />
-              <div className='flex items-center'>
-                <Label className='text-gray-600 basis-1/4'>
-                  <PhoneCall />
-                  SĐT:
-                </Label>
-                <span className='font-medium text-sm grow'>
-                  {selectedRowData.phoneNumber || 'N/A'}
-                </span>
-              </div>
-              <Separator />
-              <div className='flex items-start'>
-                <Label className='text-gray-600 basis-1/4 shrink-0'>
-                  <Locate />
-                  Địa chỉ:
-                </Label>
-                <span className='font-medium text-sm'>
-                  {selectedRowData.address || 'N/A'}
-                </span>
-              </div>
-            </div>
 
-            <DialogFooter>
-              <Button
-                variant='outline'
-                onClick={() =>
-                  setDialog(prev => ({ ...prev, details: false }))
-                }>
-                Đóng
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+      {/* PC dialog details edits */}
+      {selectedRowData && (
+        <>
+          <CustomerDetailsDialog
+            customer={selectedRowData}
+            isOpen={dialog.details}
+            onClose={() => onCloseDialog('details')}
+          />
+
+          <CustomerEditDialog
+            customer={selectedRowData}
+            isOpen={dialog.edit}
+            isLoading={updateCustomerMutation.isPending}
+            onClose={() => onCloseDialog('edit')}
+            onEdit={onMutateCustomerData}
+          />
+        </>
       )}
     </>
   )

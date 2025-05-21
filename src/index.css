@@ -161,6 +161,10 @@
   @apply border-red-700 text-red-700;
 }
 
+.dialog-right-side {
+  @apply min-w-2/5 fixed left-full translate-x-[-102%] h-[95svh] overflow-y-auto flex flex-col;
+}
+
 .status-inactive {
   @apply bg-[var(--warning-foreground)] text-[var(--warning-primary)] font-semibold;
 }
